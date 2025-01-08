@@ -13,7 +13,7 @@ module.exports = async function handler(req, res) {
             console.log('Available tables:', tables);
 
             // 데이터 가져오기
-            const records = await xata.db.random_sequences.getMany();
+            const records = await xata.db.canon.getMany();
             console.log('Fetched records:', records);
 
             if (!records || records.length === 0) {
