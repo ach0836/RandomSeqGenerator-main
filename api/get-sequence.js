@@ -8,6 +8,10 @@ module.exports = async function handler(req, res) {
             console.log('Database URL:', process.env.XATA_DATABASE_URL);
             console.log('API Key:', process.env.XATA_API_KEY);
 
+            // xata.db와 xata.db.random_sequences 로그 추가
+            console.log('xata.db:', xata.db);
+            console.log('xata.db.random_sequences:', xata.db.random_sequences);
+
             // 데이터 가져오기
             const records = await xata.db.random_sequences.getMany();
             console.log('Fetched records:', records);
