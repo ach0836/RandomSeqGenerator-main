@@ -5,7 +5,8 @@ const xata = buildClient({
     apiKey: process.env.XATA_API_KEY,
 });
 
-console.log('Xata Client:', xata);
-console.log('Xata DB:', xata.db);
+// 디버깅 로그 추가
+console.log('Xata client initialized:', xata);
+console.log('Xata database:', xata.db);
 
 module.exports = { xata };
