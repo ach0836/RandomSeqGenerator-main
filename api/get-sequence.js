@@ -1,4 +1,4 @@
-const { xata } = require('../../xata');
+const { xata } = require('../xata');
 
 module.exports = async function handler(req, res) {
     if (req.method === 'GET') {
