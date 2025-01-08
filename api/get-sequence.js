@@ -1,18 +1,22 @@
-const { xata } = require('../xata');
+const { buildClient } = require('@xata.io/client');
+
+const xata = buildClient({
+    databaseURL: process.env.XATA_DATABASE_URL,
+    apiKey: process.env.XATA_API_KEY,
+});
+
+console.log('XATA_DATABASE_URL:', process.env.XATA_DATABASE_URL); // 환경 변수 출력
+console.log('XATA_API_KEY:', process.env.XATA_API_KEY); // 환경 변수 출력
+console.log('Initialized xata client:', xata); // 클라이언트 출력
 
 module.exports = async function handler(req, res) {
     if (req.method === 'GET') {
         try {
-            console.log('Fetching data from Xata...');
-            console.log('Xata client:', xata);
-            console.log('Database URL:', process.env.XATA_DATABASE_URL);
-            console.log('API Key:', process.env.XATA_API_KEY);
-
             if (!xata || !xata.db) {
                 throw new Error('Xata client is not initialized or database is undefined.');
             }
 
-            const sequences = await xata.db.random_sequences.getAll(); // 테이블 이름 확인
+            const sequences = await xata.db.random_sequences.getAll(); // 테이블 데이터 가져오기
             console.log('Fetched sequences:', sequences);
 
             res.status(200).json(sequences);
