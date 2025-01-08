@@ -1,4 +1,4 @@
-const { xata } = require('../../xata');
+const { xata } = require('../xata');
 
 
 export default async function handler(req, res) {
