@@ -4,9 +4,13 @@ module.exports = async function handler(req, res) {
     if (req.method === 'GET') {
         try {
             console.log('Fetching data from Xata...');
-            console.log('Xata client:', xata); // 클라이언트 확인
+            console.log('Xata client:', xata); // Xata 클라이언트 확인
             console.log('Database URL:', process.env.XATA_DATABASE_URL); // 데이터베이스 URL 확인
-            console.log('API Key:', process.env.XATA_API_KEY); // API 키 
+            console.log('API Key:', process.env.XATA_API_KEY); // API 키 확인
+
+            // Xata 데이터베이스 구조 확인
+            const tables = await xata.tables.list();
+            console.log('Available tables:', tables);
 
             // 데이터 가져오기
             const records = await xata.db.random_sequences.getMany();
