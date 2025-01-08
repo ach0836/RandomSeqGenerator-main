@@ -1,4 +1,5 @@
-import { xata } from '../../xata';
+const { xata } = require('../../xata');
+
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
