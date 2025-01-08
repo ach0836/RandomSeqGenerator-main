@@ -5,34 +5,83 @@ myModal.toggle();
 let seqArray = [];
 let isOverlabed = false;
 
-function start() {
-	let num = option.txt.value;
-	let chk1 = option.chk1.checked;
-	let chk2 = option.chk2.checked;
-	if (num * 0 === 0 && num != "") {
-		if (3 <= num && num <= 10000 && num == Math.floor(num)) {
+// Xata API endpoints
+const getSequenceUrl = '/api/get-sequence';
+const deleteSequenceUrl = '/api/delete-sequence';
+
+async function start() {
+	try {
+		// Fetch existing sequence from Xata
+		const existingRecord = await fetchExistingSequence();
+
+		if (existingRecord) {
+			// If data exists in Xata, use it
+			seqArray = existingRecord.sequence.split(',').map(Number);
+			isOverlabed = false; // Xata 데이터를 시퀀스 모드로 간주
 			myModal.toggle();
-			for (let i = 0; i < num; i++) seqArray.push(i + 1);
-			for (let i = 0; i < num; i++) {
-				let rand = Math.floor(Math.random() * num);
-				let tmp = seqArray[i];
-				seqArray[i] = seqArray[rand];
-				seqArray[rand] = tmp;
-			}
-			if (chk1) isOverlabed = true;
-			if (chk2) {
-				let outter = document.getElementById('outter');
-				let inner = document.getElementById('field');
-				outter.className = 'd-flex flex-column justify-content-center vh-100';
-				inner.className = 'my-wmax my-hmax';
-			}
+			launch();
+			await deleteSequence(existingRecord.id);
 		} else {
-			document.getElementById('lb1').style.display = 'none';
-			document.getElementById('lb2').style.display = 'block';
+			// If no data in Xata, use existing random sequence logic
+			let num = option.txt.value;
+			let chk1 = option.chk1.checked;
+			let chk2 = option.chk2.checked;
+			if (num * 0 === 0 && num != "") {
+				if (3 <= num && num <= 10000 && num == Math.floor(num)) {
+					myModal.toggle();
+					for (let i = 0; i < num; i++) seqArray.push(i + 1);
+					for (let i = 0; i < num; i++) {
+						let rand = Math.floor(Math.random() * num);
+						let tmp = seqArray[i];
+						seqArray[i] = seqArray[rand];
+						seqArray[rand] = tmp;
+					}
+					if (chk1) isOverlabed = true;
+					if (chk2) {
+						let outter = document.getElementById('outter');
+						let inner = document.getElementById('field');
+						outter.className = 'd-flex flex-column justify-content-center vh-100';
+						inner.className = 'my-wmax my-hmax';
+					}
+					launch();
+				} else {
+					document.getElementById('lb1').style.display = 'none';
+					document.getElementById('lb2').style.display = 'block';
+				}
+			} else {
+				document.getElementById('lb1').style.display = 'block';
+				document.getElementById('lb2').style.display = 'none';
+			}
 		}
-	} else {
-		document.getElementById('lb1').style.display = 'block';
-		document.getElementById('lb2').style.display = 'none';
+	} catch (error) {
+		console.error('An error occurred:', error);
+	}
+}
+
+// Fetch existing sequence from Xata
+async function fetchExistingSequence() {
+	try {
+		const response = await fetch(getSequenceUrl);
+		const data = await response.json();
+		return data.success ? data.record : null;
+	} catch (error) {
+		console.error('Failed to fetch sequence from Xata:', error);
+		return null;
+	}
+}
+
+// Delete sequence from Xata
+async function deleteSequence(id) {
+	try {
+		const response = await fetch(deleteSequenceUrl, {
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id }),
+		});
+		const data = await response.json();
+		console.log('Deleted sequence:', data);
+	} catch (error) {
+		console.error('Failed to delete sequence from Xata:', error);
 	}
 }
 
