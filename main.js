@@ -1,28 +1,28 @@
 'use strict';
 
-var myModal = new bootstrap.Modal(document.getElementById('modal'), {});
+let myModal = new bootstrap.Modal(document.getElementById('modal'), {});
 myModal.toggle();
-var seqArray = [];
-var isOverlabed = false;
+let seqArray = [];
+let isOverlabed = false;
 
 function start() {
-	var num = option.txt.value;
-	var chk1 = option.chk1.checked;
-	var chk2 = option.chk2.checked;
+	let num = option.txt.value;
+	let chk1 = option.chk1.checked;
+	let chk2 = option.chk2.checked;
 	if (num * 0 === 0 && num != "") {
 		if (3 <= num && num <= 10000 && num == Math.floor(num)) {
 			myModal.toggle();
-			for (var i = 0; i < num; i++) seqArray.push(i + 1);
-			for (var i = 0; i < num; i++) {
-				var rand = Math.floor(Math.random() * num);
-				var tmp = seqArray[i];
+			for (let i = 0; i < num; i++) seqArray.push(i + 1);
+			for (let i = 0; i < num; i++) {
+				let rand = Math.floor(Math.random() * num);
+				let tmp = seqArray[i];
 				seqArray[i] = seqArray[rand];
 				seqArray[rand] = tmp;
 			}
 			if (chk1) isOverlabed = true;
 			if (chk2) {
-				var outter = document.getElementById('outter');
-				var inner = document.getElementById('field');
+				let outter = document.getElementById('outter');
+				let inner = document.getElementById('field');
 				outter.className = 'd-flex flex-column justify-content-center vh-100';
 				inner.className = 'my-wmax my-hmax';
 			}
@@ -51,12 +51,12 @@ class cannonBall {
 		this.scale = 20;
 	}
 	draw() {
-		var nx = this.x + (myCanvas.width / 2);
-		var ny = this.y + (myCanvas.height / 5) + (600 / this.scale);
-		var radius = myCanvas.height / this.scale;
-		var gx = nx - radius;
-		var gy = ny - radius;
-		var gradient = ctx.createRadialGradient(gx, gy, radius / 2, nx, ny, radius * 2);
+		let nx = this.x + (myCanvas.width / 2);
+		let ny = this.y + (myCanvas.height / 5) + (600 / this.scale);
+		let radius = myCanvas.height / this.scale;
+		let gx = nx - radius;
+		let gy = ny - radius;
+		let gradient = ctx.createRadialGradient(gx, gy, radius / 2, nx, ny, radius * 2);
 		gradient.addColorStop(0, '#03ff00');
 		gradient.addColorStop(1, '#127909');
 		ctx.strokeStyle = 'rgba(0, 0, 0, 0)';
@@ -76,10 +76,10 @@ class ballNum {
 		this.num = 'none';
 	}
 	draw() {
-		var sz = String(myCanvas.height / this.scale / 1.5);
+		let sz = String(myCanvas.height / this.scale / 1.5);
 		ctx.font = sz + "px Do Hyeon";
-		var nx = this.x + (myCanvas.width / 2) - (ctx.measureText(String(this.num)).width / 2);
-		var ny = this.y + (myCanvas.height / 5) + (700 / this.scale);
+		let nx = this.x + (myCanvas.width / 2) - (ctx.measureText(String(this.num)).width / 2);
+		let ny = this.y + (myCanvas.height / 5) + (700 / this.scale);
 		ctx.fillStyle = 'yellow';
 		ctx.fillText(this.num, nx, ny);
 	}
@@ -100,18 +100,18 @@ class cloud{
 	}
 }
 */
-var ball = new cannonBall();
-var number = new ballNum();
-//var _cloud = new cloud;
+let ball = new cannonBall();
+let number = new ballNum();
+//let _cloud = new cloud;
 
-/* Animation Control Variables */
+/* Animation Control letiables */
 let isLooping = false;
 let lastTimestamp = null;
 
 /* launch */
 
-var cnt = 0;
-var numLog = document.getElementById('log');
+let cnt = 0;
+let numLog = document.getElementById('log');
 
 // 특정 숫자를 발사하는 함수
 function launchNumber(specificNum) {
@@ -149,11 +149,11 @@ function launchNumber(specificNum) {
 // 기존 launch 함수는 시퀀스에 따라 발사합니다.
 function launch() {
 	if (isOverlabed) {
-		var randNum = seqArray[Math.floor(Math.random() * seqArray.length)];
+		let randNum = seqArray[Math.floor(Math.random() * seqArray.length)];
 		launchNumber(randNum);
 	} else {
 		if (cnt < seqArray.length) {
-			var seqNum = seqArray[cnt];
+			let seqNum = seqArray[cnt];
 			launchNumber(seqNum);
 		} else {
 			numLog.innerHTML += '<div class="log-inner font-dh">모든 공을 발사하였습니다.</div>';
@@ -192,9 +192,9 @@ const keyToNumberMap = {
 
 // 키보드 이벤트 리스너 추가
 document.addEventListener('keydown', function (event) {
-	var key = event.key.toLowerCase(); // 대소문자 구분 없이 처리
+	let key = event.key.toLowerCase(); // 대소문자 구분 없이 처리
 	if (keyToNumberMap.hasOwnProperty(key)) {
-		var numberToLaunch = keyToNumberMap[key];
+		let numberToLaunch = keyToNumberMap[key];
 		launchNumber(numberToLaunch);
 	}
 });
