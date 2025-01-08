@@ -5,83 +5,40 @@ myModal.toggle();
 let seqArray = [];
 let isOverlabed = false;
 
-// Xata API endpoints
-const getSequenceUrl = '/api/get-sequence';
-const deleteSequenceUrl = '/api/delete-sequence';
-
 async function start() {
 	try {
-		// Fetch existing sequence from Xata
-		const existingRecord = await fetchExistingSequence();
-
-		if (existingRecord) {
-			// If data exists in Xata, use it
-			seqArray = existingRecord.sequence.split(',').map(Number);
-			isOverlabed = false; // Xata 데이터를 시퀀스 모드로 간주
-			myModal.toggle();
-			launch();
-			await deleteSequence(existingRecord.id);
-		} else {
-			// If no data in Xata, use existing random sequence logic
-			let num = option.txt.value;
-			let chk1 = option.chk1.checked;
-			let chk2 = option.chk2.checked;
-			if (num * 0 === 0 && num != "") {
-				if (3 <= num && num <= 10000 && num == Math.floor(num)) {
-					myModal.toggle();
-					for (let i = 0; i < num; i++) seqArray.push(i + 1);
-					for (let i = 0; i < num; i++) {
-						let rand = Math.floor(Math.random() * num);
-						let tmp = seqArray[i];
-						seqArray[i] = seqArray[rand];
-						seqArray[rand] = tmp;
-					}
-					if (chk1) isOverlabed = true;
-					if (chk2) {
-						let outter = document.getElementById('outter');
-						let inner = document.getElementById('field');
-						outter.className = 'd-flex flex-column justify-content-center vh-100';
-						inner.className = 'my-wmax my-hmax';
-					}
-					launch();
-				} else {
-					document.getElementById('lb1').style.display = 'none';
-					document.getElementById('lb2').style.display = 'block';
+		// 기존 랜덤 시퀀스 로직
+		let num = option.txt.value;
+		let chk1 = option.chk1.checked;
+		let chk2 = option.chk2.checked;
+		if (num * 0 === 0 && num != "") {
+			if (3 <= num && num <= 10000 && num == Math.floor(num)) {
+				myModal.toggle();
+				for (let i = 0; i < num; i++) seqArray.push(i + 1);
+				for (let i = 0; i < num; i++) {
+					let rand = Math.floor(Math.random() * num);
+					let tmp = seqArray[i];
+					seqArray[i] = seqArray[rand];
+					seqArray[rand] = tmp;
 				}
+				if (chk1) isOverlabed = true;
+				if (chk2) {
+					let outter = document.getElementById('outter');
+					let inner = document.getElementById('field');
+					outter.className = 'd-flex flex-column justify-content-center vh-100';
+					inner.className = 'my-wmax my-hmax';
+				}
+				launch();
 			} else {
-				document.getElementById('lb1').style.display = 'block';
-				document.getElementById('lb2').style.display = 'none';
+				document.getElementById('lb1').style.display = 'none';
+				document.getElementById('lb2').style.display = 'block';
 			}
+		} else {
+			document.getElementById('lb1').style.display = 'block';
+			document.getElementById('lb2').style.display = 'none';
 		}
 	} catch (error) {
 		console.error('An error occurred:', error);
-	}
-}
-
-// Fetch existing sequence from Xata
-async function fetchExistingSequence() {
-	try {
-		const response = await fetch(getSequenceUrl);
-		const data = await response.json();
-		return data.success ? data.record : null;
-	} catch (error) {
-		console.error('Failed to fetch sequence from Xata:', error);
-		return null;
-	}
-}
-
-// Delete sequence from Xata
-async function deleteSequence(id) {
-	try {
-		const response = await fetch(deleteSequenceUrl, {
-			method: 'DELETE',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id }),
-		});
-		const data = await response.json();
-		console.log('Deleted sequence:', data);
-	} catch (error) {
-		console.error('Failed to delete sequence from Xata:', error);
 	}
 }
 
@@ -133,25 +90,9 @@ class ballNum {
 		ctx.fillText(this.num, nx, ny);
 	}
 }
-/*
-class cloud{
-	constructor(){
-		this.x = 0;
-		this.y = 0;
-		this.speed = 1;
-	}
-	draw(){
-		ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-		ctx.beginPath();
-		ctx.arc(x, y, 100, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.stroke();
-	}
-}
-*/
+
 let ball = new cannonBall();
 let number = new ballNum();
-//let _cloud = new cloud;
 
 /* Animation Control letiables */
 let isLooping = false;
@@ -198,12 +139,19 @@ function launchNumber(specificNum) {
 // 기존 launch 함수는 시퀀스에 따라 발사합니다.
 function launch() {
 	if (isOverlabed) {
-		let randNum = seqArray[Math.floor(Math.random() * seqArray.length)];
+		let randNum;
+		do {
+			randNum = seqArray[Math.floor(Math.random() * seqArray.length)];
+		} while (randNum === 11 || randNum === 13); // 11번과 13번을 배제
 		launchNumber(randNum);
 	} else {
 		if (cnt < seqArray.length) {
-			let seqNum = seqArray[cnt];
-			launchNumber(seqNum);
+			let seqNum;
+			do {
+				seqNum = seqArray[cnt];
+				cnt++;
+			} while (seqNum === 11 || seqNum === 13 && cnt < seqArray.length); // 11번과 13번을 배제
+			if (seqNum !== 11 && seqNum !== 13) launchNumber(seqNum);
 		} else {
 			numLog.innerHTML += '<div class="log-inner font-dh">모든 공을 발사하였습니다.</div>';
 			numLog.scrollTop = numLog.scrollHeight;
@@ -244,7 +192,9 @@ document.addEventListener('keydown', function (event) {
 	let key = event.key.toLowerCase(); // 대소문자 구분 없이 처리
 	if (keyToNumberMap.hasOwnProperty(key)) {
 		let numberToLaunch = keyToNumberMap[key];
-		launchNumber(numberToLaunch);
+		if (numberToLaunch !== 11 && numberToLaunch !== 13) { // 11번과 13번 배제
+			launchNumber(numberToLaunch);
+		}
 	}
 });
 
@@ -259,7 +209,6 @@ function loop(timestamp) {
 	ctx.canvas.height = field.offsetHeight;
 	ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
-	//	_cloud.draw();
 	ball.draw();
 	number.draw();
 
@@ -278,7 +227,7 @@ function loop(timestamp) {
 	requestAnimationFrame(loop);
 }
 
-/* ect */
+/* etc */
 
 function reload() {
 	window.location.reload();
