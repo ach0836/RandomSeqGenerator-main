@@ -15,7 +15,7 @@ function start() {
 		if (3 <= num && num <= 10000 && num == Math.floor(num)) {
 			myModal.toggle();
 			for (var i = 0; i < num; i++) {
-				if (i + 1 !== 11 && i + 1 !== 13) { // 11과 13 제외
+				if (i + 1 !== 9 && i + 1 !== 11 && i + 1 !== 13) { // 9, 11, 13 제외
 					seqArray.push(i + 1);
 				}
 			}
@@ -26,9 +26,9 @@ function start() {
 				seqArray[rand] = tmp;
 			}
 
-			// 중복 비허용 상태에서 마지막에 11, 13 추가
+			// 중복 비허용 상태에서 마지막에 9, 11, 13 추가
 			if (!chk1) {
-				seqArray.push(11, 13);
+				seqArray.push(9, 11, 13);
 				seqArray = seqArray.slice(0, num); // 개수 제한
 			}
 
