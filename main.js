@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /* make random sequence array */
 
@@ -25,6 +25,13 @@ function start() {
 				seqArray[i] = seqArray[rand];
 				seqArray[rand] = tmp;
 			}
+
+			// 중복 비허용 상태에서 마지막에 11, 13 추가
+			if (!chk1) {
+				seqArray.push(11, 13);
+				seqArray = seqArray.slice(0, num); // 개수 제한
+			}
+
 			if (chk1) isOverlabed = true;
 			if (chk2) {
 				var outter = document.getElementById('outter');
@@ -122,11 +129,11 @@ function launch() {
 		number.scale = 20;
 		number.num = seqArray[cnt];
 	} else {
-		numLog.innerHTML += '<div class=\"log-inner font-dh\">모든 공을 발사하였습니다.</div>';
+		numLog.innerHTML += '<div class="log-inner font-dh">모든 공을 발사하였습니다.</div>';
 		numLog.scrollTop = numLog.scrollHeight;
 	}
 	if (isOverlabed || cnt < seqArray.length) {
-		numLog.innerHTML += '<div class=\"log-inner d-flex justify-content-between font-dh\"><p>[' + (cnt + 1) + '] : </p><p>' + number.num + '번</p></div>';
+		numLog.innerHTML += '<div class="log-inner d-flex justify-content-between font-dh"><p>[' + (cnt + 1) + '] : </p><p>' + number.num + '번</p></div>';
 		numLog.scrollTop = numLog.scrollHeight;
 	}
 	if (cnt == 0) loop();
