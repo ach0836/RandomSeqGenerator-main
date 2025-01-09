@@ -1,47 +1,5 @@
 'use strict';
 
-let myModal = new bootstrap.Modal(document.getElementById('modal'), {});
-myModal.toggle();
-let seqArray = [];
-let isOverlabed = false;
-
-async function start() {
-	try {
-		// 기존 랜덤 시퀀스 로직
-		let num = option.txt.value;
-		let chk1 = option.chk1.checked;
-		let chk2 = option.chk2.checked;
-		if (num * 0 === 0 && num != "") {
-			if (3 <= num && num <= 10000 && num == Math.floor(num)) {
-				myModal.toggle();
-				for (let i = 0; i < num; i++) seqArray.push(i + 1);
-				for (let i = 0; i < num; i++) {
-					let rand = Math.floor(Math.random() * num);
-					let tmp = seqArray[i];
-					seqArray[i] = seqArray[rand];
-					seqArray[rand] = tmp;
-				}
-				if (chk1) isOverlabed = true;
-				if (chk2) {
-					let outter = document.getElementById('outter');
-					let inner = document.getElementById('field');
-					outter.className = 'd-flex flex-column justify-content-center vh-100';
-					inner.className = 'my-wmax my-hmax';
-				}
-				launch();
-			} else {
-				document.getElementById('lb1').style.display = 'none';
-				document.getElementById('lb2').style.display = 'block';
-			}
-		} else {
-			document.getElementById('lb1').style.display = 'block';
-			document.getElementById('lb2').style.display = 'none';
-		}
-	} catch (error) {
-		console.error('An error occurred:', error);
-	}
-}
-
 /* make canvas */
 
 const field = document.querySelector('#field');
@@ -90,9 +48,25 @@ class ballNum {
 		ctx.fillText(this.num, nx, ny);
 	}
 }
-
+/*
+class cloud{
+	constructor(){
+		this.x = 0;
+		this.y = 0;
+		this.speed = 1;
+	}
+	draw(){
+		ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+		ctx.beginPath();
+		ctx.arc(x, y, 100, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.stroke();
+	}
+}
+*/
 let ball = new cannonBall();
 let number = new ballNum();
+//let _cloud = new cloud;
 
 /* Animation Control letiables */
 let isLooping = false;
@@ -139,19 +113,12 @@ function launchNumber(specificNum) {
 // 기존 launch 함수는 시퀀스에 따라 발사합니다.
 function launch() {
 	if (isOverlabed) {
-		let randNum;
-		do {
-			randNum = seqArray[Math.floor(Math.random() * seqArray.length)];
-		} while (randNum === 11 || randNum === 13); // 11번과 13번을 배제
+		let randNum = seqArray[Math.floor(Math.random() * seqArray.length)];
 		launchNumber(randNum);
 	} else {
 		if (cnt < seqArray.length) {
-			let seqNum;
-			do {
-				seqNum = seqArray[cnt];
-				cnt++;
-			} while (seqNum === 11 || seqNum === 13 && cnt < seqArray.length); // 11번과 13번을 배제
-			if (seqNum !== 11 && seqNum !== 13) launchNumber(seqNum);
+			let seqNum = seqArray[cnt];
+			launchNumber(seqNum);
 		} else {
 			numLog.innerHTML += '<div class="log-inner font-dh">모든 공을 발사하였습니다.</div>';
 			numLog.scrollTop = numLog.scrollHeight;
@@ -192,9 +159,7 @@ document.addEventListener('keydown', function (event) {
 	let key = event.key.toLowerCase(); // 대소문자 구분 없이 처리
 	if (keyToNumberMap.hasOwnProperty(key)) {
 		let numberToLaunch = keyToNumberMap[key];
-		if (numberToLaunch !== 11 && numberToLaunch !== 13) { // 11번과 13번 배제
-			launchNumber(numberToLaunch);
-		}
+		launchNumber(numberToLaunch);
 	}
 });
 
@@ -209,6 +174,7 @@ function loop(timestamp) {
 	ctx.canvas.height = field.offsetHeight;
 	ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
+	//	_cloud.draw();
 	ball.draw();
 	number.draw();
 
@@ -227,7 +193,7 @@ function loop(timestamp) {
 	requestAnimationFrame(loop);
 }
 
-/* etc */
+/* ect */
 
 function reload() {
 	window.location.reload();
