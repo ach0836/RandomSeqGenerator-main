@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /* make random sequence array */
 
@@ -14,9 +14,13 @@ function start() {
 	if (num * 0 === 0 && num != "") {
 		if (3 <= num && num <= 10000 && num == Math.floor(num)) {
 			myModal.toggle();
-			for (var i = 0; i < num; i++) seqArray.push(i + 1);
 			for (var i = 0; i < num; i++) {
-				var rand = Math.floor(Math.random() * num);
+				if (i + 1 !== 11 && i + 1 !== 13) { // 11과 13 제외
+					seqArray.push(i + 1);
+				}
+			}
+			for (var i = 0; i < seqArray.length; i++) {
+				var rand = Math.floor(Math.random() * seqArray.length);
 				var tmp = seqArray[i];
 				seqArray[i] = seqArray[rand];
 				seqArray[rand] = tmp;
@@ -86,25 +90,9 @@ class ballNum {
 		ctx.fillText(this.num, nx, ny);
 	}
 }
-/*
-class cloud{
-	constructor(){
-		this.x = 0;
-		this.y = 0;
-		this.speed = 1;
-	}
-	draw(){
-		ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-		ctx.beginPath();
-		ctx.arc(x, y, 100, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.stroke();
-	}
-}
-*/
-var ball = new cannonBall;
-var number = new ballNum;
-//var _cloud = new cloud;
+
+var ball = new cannonBall();
+var number = new ballNum();
 
 function loop() {
 	requestAnimationFrame(loop);
@@ -112,7 +100,6 @@ function loop() {
 	ctx.canvas.height = field.offsetHeight;
 	ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
-	//	_cloud.draw();
 	ball.draw();
 	number.draw();
 	if (ball.scale > 5) {
@@ -135,7 +122,7 @@ function launch() {
 		number.scale = 20;
 		number.num = seqArray[cnt];
 	} else {
-		numLog.innerHTML += '<div class=\"log-inner font-dh\">모든공을 발사하였습니다.</div>'
+		numLog.innerHTML += '<div class=\"log-inner font-dh\">모든 공을 발사하였습니다.</div>';
 		numLog.scrollTop = numLog.scrollHeight;
 	}
 	if (isOverlabed || cnt < seqArray.length) {
@@ -146,7 +133,7 @@ function launch() {
 	cnt++;
 }
 
-/* ect */
+/* etc */
 
 function reload() {
 	window.location.reload();
